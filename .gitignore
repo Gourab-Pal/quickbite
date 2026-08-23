@@ -1,0 +1,21 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Java and Gradle
+backend/.gradle/
+backend/build/
+*.class
+
+# React
+frontend/node_modules/
+frontend/dist/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Operating system
+.DS_Store
+Thumbs.db
