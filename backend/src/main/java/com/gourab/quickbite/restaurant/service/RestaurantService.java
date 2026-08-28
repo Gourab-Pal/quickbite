@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,77 +16,50 @@ import java.util.UUID;
 
 @Service
 public class RestaurantService {
-
     private final RestaurantRepository restaurantRepository;
-
-    public RestaurantService(
-            RestaurantRepository restaurantRepository
-    ) {
+    public RestaurantService(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public PageResponse<RestaurantSummaryResponse> getRestaurants(
-            int page,
-            int size
-    ) {
-        if (page < 0) {
-            throw new IllegalArgumentException(
-                    "Page number must be zero or greater"
-            );
-        }
-
-        if (size < 1 || size > 100) {
-            throw new IllegalArgumentException(
-                    "Page size must be between 1 and 100"
-            );
-        }
-
-        PageRequest pageRequest = PageRequest.of(
-                page,
-                size,
-                Sort.by("name").ascending()
-        );
-
-        Page<RestaurantEntity> databasePage =
-                restaurantRepository.findAll(pageRequest);
-
-        List<RestaurantSummaryResponse> responses =
-                new ArrayList<>();
-
-        for (RestaurantEntity entity : databasePage.getContent()) {
-            responses.add(toResponse(entity));
-        }
-
-        return new PageResponse<>(
-                responses,
-                databasePage.getNumber(),
-                databasePage.getSize(),
-                databasePage.getTotalElements(),
-                databasePage.getTotalPages(),
-                databasePage.isFirst(),
-                databasePage.isLast()
-        );
+    public PageResponse<RestaurantSummaryResponse> getRestaurants(int page, int size) {
+        validatePagination(page, size);
+        PageRequest pageRequest = createPageRequest(page, size);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findAll(pageRequest);
+        return toPageResponse(databasePage);
     }
 
-    public Optional<RestaurantSummaryResponse> getRestaurantById(
-            UUID restaurantId
-    ) {
-        Optional<RestaurantEntity> databaseResult =
-                restaurantRepository.findById(restaurantId);
+    public Optional<RestaurantSummaryResponse> getRestaurantById(UUID restaurantId) {
+        Optional<RestaurantEntity> databaseResult = restaurantRepository.findById(restaurantId);
 
         if (databaseResult.isEmpty()) {
             return Optional.empty();
         }
 
-        RestaurantSummaryResponse response =
-                toResponse(databaseResult.get());
+        RestaurantSummaryResponse response = toResponse(databaseResult.get());
 
         return Optional.of(response);
     }
 
-    private RestaurantSummaryResponse toResponse(
-            RestaurantEntity entity
-    ) {
+    public PageResponse<RestaurantSummaryResponse> getRestaurantsByOpenStatus(boolean open, int page, int size) {
+        validatePagination(page, size);
+        PageRequest pageRequest = createPageRequest(page, size);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findByOpen(open, pageRequest);
+        return toPageResponse(databasePage);
+    }
+
+    public PageResponse<RestaurantSummaryResponse> getRestaurantsByCityCode(Long cityCode, int page, int size) {
+        validatePagination(page, size);
+        PageRequest pageRequest = createPageRequest(page, size);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findByCityCode(2L, pageRequest);
+        return toPageResponse(databasePage);
+    }
+
+
+
+
+    ///////////////////////  PRIVATE HELPER METHODS /////////////////////////////////
+
+    private RestaurantSummaryResponse toResponse(RestaurantEntity entity) {
         return new RestaurantSummaryResponse(
                 entity.getId(),
                 entity.getSlug(),
@@ -110,4 +82,38 @@ public class RestaurantService {
                 entity.getPrimaryOffer()
         );
     }
+
+    private void validatePagination(int page, int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page number must be zero or greater");
+        }
+
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Page size must be between 1 and 100");
+        }
+    }
+
+    private PageRequest createPageRequest(int page, int size) {
+        return PageRequest.of(page, size, Sort.by("name").ascending());
+    }
+
+    private PageResponse<RestaurantSummaryResponse> toPageResponse(Page<RestaurantEntity> databasePage) {
+        List<RestaurantSummaryResponse> responses = new ArrayList<>();
+
+        for (RestaurantEntity entity : databasePage.getContent()) {
+            responses.add(toResponse(entity));
+        }
+
+        return new PageResponse<>(
+                responses,
+                databasePage.getNumber(),
+                databasePage.getSize(),
+                databasePage.getTotalElements(),
+                databasePage.getTotalPages(),
+                databasePage.isFirst(),
+                databasePage.isLast()
+        );
+    }
+
+
 }

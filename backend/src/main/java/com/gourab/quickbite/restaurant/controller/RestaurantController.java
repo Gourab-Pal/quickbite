@@ -23,6 +23,12 @@ public class RestaurantController {
 
     @GetMapping
     public PageResponse<RestaurantSummaryResponse> getRestaurants(
+            @RequestParam(required = false)
+            Long cityCode,
+
+            @RequestParam(required = false)
+            Boolean open,
+
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "Page number must be zero or greater")
             int page,
@@ -32,6 +38,13 @@ public class RestaurantController {
             @Max(value = 100, message = "Page size must not exceed 100")
             int size
     ) {
+        if(open != null) {
+            return restaurantService.getRestaurantsByOpenStatus(open, page, size);
+        }
+        if(cityCode != null) {
+            return restaurantService.getRestaurantsByCityCode(cityCode, page, size);
+        }
+
         return restaurantService.getRestaurants(page, size);
     }
 
