@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +24,9 @@ public class RestaurantController {
 
     @GetMapping
     public PageResponse<RestaurantSummaryResponse> getRestaurants(
+            @RequestParam (required = false)
+            BigDecimal averageRatingThreshold,
+
             @RequestParam(required = false)
             Long cityCode,
 
@@ -43,6 +47,9 @@ public class RestaurantController {
         }
         if(cityCode != null) {
             return restaurantService.getRestaurantsByCityCode(cityCode, page, size);
+        }
+        if(averageRatingThreshold != null) {
+            return restaurantService.getRestaurantsByAverageRatingGreaterThan(averageRatingThreshold, page, size);
         }
 
         return restaurantService.getRestaurants(page, size);
