@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+somw somessssdfggffgfgggggfdgdgdfgfdgdfgfdggdf$ErrorActionPreference = 'Stop'
 
 $quickBiteFrontend = 'D:\Code\QuickBite\frontend'
 
