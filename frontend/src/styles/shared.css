@@ -130,7 +130,8 @@
 .portal-topbar > div:first-child { display: grid; gap: 3px; }
 .portal-topbar small { color: var(--muted); }
 .portal-topbar__actions { display: flex; gap: 9px; }
-.portal-topbar__actions button { display: inline-flex; min-height: 39px; gap: 7px; align-items: center; padding: 0 13px; border: 1px solid var(--border); border-radius: 10px; color: var(--charcoal); background: #fff; font-weight: 650; }
+.portal-topbar__actions :is(a, button) { display: inline-flex; min-height: 39px; gap: 7px; align-items: center; padding: 0 13px; border: 1px solid var(--border); border-radius: 10px; color: var(--charcoal); background: #fff; font-weight: 650; }
+.portal-topbar__actions :is(a, button):hover { border-color: #d9cddd; background: #faf8fb; }
 .portal-content { padding: 30px; }
 
 .overlay-backdrop { position: fixed; z-index: 100; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgb(30 19 36 / 55%); backdrop-filter: blur(4px); }
@@ -258,9 +259,8 @@
   .portal-brand,.portal-profile { display: none; }
   .portal-sidebar nav { display: flex; height: 100%; overflow-x: auto; }
   .portal-sidebar nav a { min-width: 52px; }
-  .portal-sidebar nav a:nth-child(n+6) { display: none; }
   .portal-topbar { padding: 0 15px; }
-  .portal-topbar__actions button span { display: none; }
+  .portal-topbar__actions :is(a, button) span { display: none; }
   .portal-content { padding: 20px 14px 94px; }
   .overlay-backdrop { padding: 0; align-items: flex-end; }
   .overlay-panel--modal,.overlay-panel--modal.overlay-panel--wide { width: 100%; max-height: 90vh; border-radius: 20px 20px 0 0; }

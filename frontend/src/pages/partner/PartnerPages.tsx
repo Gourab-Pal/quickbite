@@ -61,6 +61,7 @@ import {
 } from '../../components/Common'
 import { useApp } from '../../context/AppContext'
 import { menuItems, partnerOrders as initialPartnerOrders } from '../../data'
+import { MarketingPage } from '../../layouts'
 import type { PartnerOrder } from '../../types'
 import './partner.css'
 
@@ -287,7 +288,8 @@ function documentInput(
 
 export function PartnerLandingPage() {
   return (
-    <main className="partner-marketing">
+    <MarketingPage>
+      <main className="partner-marketing">
       <section className="partner-marketing__hero">
         <div className="partner-marketing__copy">
           <span className="partner-kicker">Restaurant partners</span>
@@ -344,7 +346,8 @@ export function PartnerLandingPage() {
           <Link className="partner-button partner-button--mint" to="/partner/apply">Begin application</Link>
         </PartnerPanel>
       </section>
-    </main>
+      </main>
+    </MarketingPage>
   )
 }
 
@@ -369,6 +372,7 @@ export function PartnerLoginPage() {
 
   return (
     <main className="partner-auth-page">
+      <Link className="partner-auth-back" to="/partner"><PiArrowLeft /> Back to partner overview</Link>
       <section className="partner-auth-card">
         <div className="partner-auth-card__visual">
           <img src="/assets/food/restaurant.jpg" alt="A welcoming restaurant interior" />
@@ -536,39 +540,45 @@ export function PartnerApplicationStatusPage() {
   const { showToast } = useApp()
   return (
     <main className="partner-status-page">
-      <section className="partner-status-hero">
-        <span><PiClock /></span>
-        <div>
-          <span className="partner-kicker">Application QB-PA-24081</span>
-          <h1>Your documents are being verified.</h1>
-          <p>Submitted on 29 August 2026 · We expect the next update within two business days.</p>
-        </div>
-        <StatusBadge tone="warning">In review</StatusBadge>
-      </section>
-      <div className="partner-status-grid">
-        <PartnerPanel>
-          <PanelHeading title="Application progress" description="We will notify you whenever a stage changes." />
-          <ol className="partner-status-timeline">
-            <li className="is-complete"><span><PiCheck /></span><div><strong>Application submitted</strong><small>29 Aug, 11:24 AM</small></div></li>
-            <li className="is-current"><span><PiEye /></span><div><strong>Document verification</strong><small>Our onboarding team is reviewing five documents.</small></div></li>
-            <li><span>3</span><div><strong>Outlet verification</strong><small>Location and menu checks</small></div></li>
-            <li><span>4</span><div><strong>Partner agreement</strong><small>Final terms and activation</small></div></li>
-          </ol>
-        </PartnerPanel>
-        <div className="partner-status-side">
+      <header className="partner-application-header">
+        <Link to="/partner"><PiArrowLeft /> Back to partner overview</Link>
+        <span>Application QB-PA-24081</span>
+      </header>
+      <div className="partner-status-content">
+        <section className="partner-status-hero">
+          <span><PiClock /></span>
+          <div>
+            <span className="partner-kicker">Application QB-PA-24081</span>
+            <h1>Your documents are being verified.</h1>
+            <p>Submitted on 29 August 2026 · We expect the next update within two business days.</p>
+          </div>
+          <StatusBadge tone="warning">In review</StatusBadge>
+        </section>
+        <div className="partner-status-grid">
           <PartnerPanel>
-            <PanelHeading title="Submitted documents" />
-            <div className="partner-document-list">
-              {['FSSAI licence', 'PAN card', 'GSTIN certificate', 'Bank proof', 'Restaurant menu'].map((document) => <span key={document}><PiCheckCircle /> {document}<small>Received</small></span>)}
-            </div>
-            <button className="partner-button partner-button--secondary partner-button--full" type="button" onClick={() => showToast('Document update link opened')}>Update documents</button>
+            <PanelHeading title="Application progress" description="We will notify you whenever a stage changes." />
+            <ol className="partner-status-timeline">
+              <li className="is-complete"><span><PiCheck /></span><div><strong>Application submitted</strong><small>29 Aug, 11:24 AM</small></div></li>
+              <li className="is-current"><span><PiEye /></span><div><strong>Document verification</strong><small>Our onboarding team is reviewing five documents.</small></div></li>
+              <li><span>3</span><div><strong>Outlet verification</strong><small>Location and menu checks</small></div></li>
+              <li><span>4</span><div><strong>Partner agreement</strong><small>Final terms and activation</small></div></li>
+            </ol>
           </PartnerPanel>
-          <PartnerPanel className="partner-help-card">
-            <span><PiHeadset /></span>
-            <h3>Need onboarding help?</h3>
-            <p>Your partner specialist, Kavya, is available Mon–Sat from 9 AM to 7 PM.</p>
-            <button type="button" onClick={() => showToast('Kavya will call you shortly')}><PiPhone /> Request a call</button>
-          </PartnerPanel>
+          <div className="partner-status-side">
+            <PartnerPanel>
+              <PanelHeading title="Submitted documents" />
+              <div className="partner-document-list">
+                {['FSSAI licence', 'PAN card', 'GSTIN certificate', 'Bank proof', 'Restaurant menu'].map((document) => <span key={document}><PiCheckCircle /> {document}<small>Received</small></span>)}
+              </div>
+              <button className="partner-button partner-button--secondary partner-button--full" type="button" onClick={() => showToast('Document update link opened')}>Update documents</button>
+            </PartnerPanel>
+            <PartnerPanel className="partner-help-card">
+              <span><PiHeadset /></span>
+              <h3>Need onboarding help?</h3>
+              <p>Your partner specialist, Kavya, is available Mon–Sat from 9 AM to 7 PM.</p>
+              <button type="button" onClick={() => showToast('Kavya will call you shortly')}><PiPhone /> Request a call</button>
+            </PartnerPanel>
+          </div>
         </div>
       </div>
     </main>
@@ -1203,7 +1213,8 @@ export function PartnerSupportPage() {
 
 export function DeliveryPartnerLandingPage() {
   return (
-    <main className="partner-marketing delivery-marketing">
+    <MarketingPage>
+      <main className="partner-marketing delivery-marketing">
       <section className="partner-marketing__hero delivery-marketing__hero">
         <div className="partner-marketing__copy">
           <span className="partner-kicker">Deliver with QuickBite</span>
@@ -1222,7 +1233,8 @@ export function DeliveryPartnerLandingPage() {
         <div><span className="partner-kicker">What you need</span><h2>Documents for a smooth application.</h2><p>Aadhaar or voter ID, PAN, bank proof and a valid driving licence for motorised vehicles.</p></div>
         <PartnerPanel><h3>Built around your day</h3><p><PiCheckCircle /> Choose full-time or part-time shifts</p><p><PiCheckCircle /> Deliver in nearby service areas</p><p><PiCheckCircle /> Track orders, incentives and payouts</p><p><PiCheckCircle /> Access rider support during every shift</p><Link className="partner-button partner-button--mint" to="/delivery-partner/apply">Get started</Link></PartnerPanel>
       </section>
-    </main>
+      </main>
+    </MarketingPage>
   )
 }
 

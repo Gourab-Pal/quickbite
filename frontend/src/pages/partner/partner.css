@@ -492,9 +492,29 @@
 }
 
 .partner-auth-page {
+  position: relative;
   display: grid;
-  padding: 56px 24px;
+  padding: 76px 24px 56px;
   place-items: center;
+}
+
+.partner-auth-back {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  left: max(24px, calc((100% - 1060px) / 2));
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  padding: 9px 11px;
+  border-radius: 9px;
+  color: var(--partner-purple);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.partner-auth-back:hover {
+  background: var(--partner-purple-soft);
 }
 
 .partner-auth-card {
@@ -1053,6 +1073,10 @@
 }
 
 .partner-status-page {
+  padding: 0;
+}
+
+.partner-status-content {
   padding: 58px max(24px, calc((100% - 1060px) / 2)) 80px;
 }
 
@@ -1427,7 +1451,7 @@
   gap: 8px;
 }
 
-.portal-shell--partner .portal-topbar__actions button {
+.portal-shell--partner .portal-topbar__actions :is(a, button) {
   display: inline-flex;
   gap: 7px;
   align-items: center;
@@ -3924,14 +3948,14 @@
     padding: 0 18px;
   }
 
-  .portal-shell--partner .portal-topbar__actions button {
+  .portal-shell--partner .portal-topbar__actions :is(a, button) {
     width: 36px;
     padding: 0;
     justify-content: center;
     font-size: 0;
   }
 
-  .portal-shell--partner .portal-topbar__actions button svg {
+  .portal-shell--partner .portal-topbar__actions :is(a, button) svg {
     font-size: 16px;
   }
 
@@ -4274,7 +4298,12 @@
   }
 
   .partner-auth-page {
-    padding: 20px 14px;
+    padding: 64px 14px 20px;
+  }
+
+  .partner-auth-back {
+    top: 14px;
+    left: 14px;
   }
 
   .partner-auth-card {
@@ -4293,7 +4322,7 @@
     padding: 28px 22px;
   }
 
-  .partner-status-page {
+  .partner-status-content {
     padding: 30px 16px 65px;
   }
 

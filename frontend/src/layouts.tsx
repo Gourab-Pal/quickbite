@@ -114,11 +114,15 @@ export function PortalLayout({ type }: { type: 'partner' | 'admin' }) {
   return (
     <div className={`portal-shell portal-shell--${type}`}>
       <aside className="portal-sidebar">
-        <Link to={type === 'partner' ? '/partner/dashboard' : '/admin'} className="portal-brand">
+        <Link
+          to={type === 'partner' ? '/partner/dashboard' : '/admin'}
+          className="portal-brand"
+          aria-label={`${type} dashboard home`}
+        >
           <Logo /><small>{type === 'partner' ? 'Partner' : 'Admin'}</small>
         </Link>
         <nav aria-label={`${type} navigation`}>
-          {nav.map(([to, label, Icon]) => <NavLink key={to} to={to} end={to === '/admin'}><Icon /><span>{label}</span></NavLink>)}
+          {nav.map(([to, label, Icon]) => <NavLink key={to} to={to} end={to === '/admin'} aria-label={label}><Icon /><span>{label}</span></NavLink>)}
         </nav>
         <div className="portal-profile">
           <img src="/assets/people/restaurant-partner.jpg" alt="Profile" />
@@ -133,6 +137,7 @@ export function PortalLayout({ type }: { type: 'partner' | 'admin' }) {
             <small>{type === 'partner' ? 'Koramangala, Bengaluru' : '29 August 2026'}</small>
           </div>
           <div className="portal-topbar__actions">
+            <Link to="/" aria-label="Back to QuickBite home"><PiHouse /><span>QuickBite home</span></Link>
             <button type="button"><PiMagnifyingGlass /> Search</button>
             <button type="button"><PiReceipt /> Reports</button>
           </div>
@@ -144,11 +149,7 @@ export function PortalLayout({ type }: { type: 'partner' | 'admin' }) {
 }
 
 export function MarketingPage({ children }: { children: ReactNode }) {
-  return <div className="marketing-page"><CustomerLayoutFrame>{children}</CustomerLayoutFrame></div>
-}
-
-function CustomerLayoutFrame({ children }: { children: ReactNode }) {
-  return <>{children}</>
+  return <div className="app-shell"><MarketingHeader />{children}<MarketingFooter /></div>
 }
 
 export function MarketingHeader() {

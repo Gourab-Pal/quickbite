@@ -218,6 +218,7 @@ export function AdminLoginPage() {
 
   return (
     <main className="admin-login-page">
+      <Link className="admin-login-back" to="/"><PiArrowLeft /> Back to QuickBite</Link>
       <section className="admin-login-card">
         <div className="admin-login-card__brand">
           <span className="admin-login-card__mark"><PiShieldCheck /></span>
