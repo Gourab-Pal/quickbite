@@ -1,333 +1,346 @@
-import { useMemo, useState } from 'react'
+import {
+  PiArrowRight,
+  PiChartLineUp,
+  PiClock,
+  PiHeadset,
+  PiLightning,
+  PiShieldCheck,
+  PiStarFill,
+  PiStorefront,
+} from 'react-icons/pi'
 import './App.css'
 
-type Restaurant = {
-  id: number
-  name: string
-  cuisine: string
-  description: string
-  rating: number
-  deliveryTime: string
-  priceForTwo: string
-  offer: string
-  emoji: string
-  visual: string
-  featured: boolean
+function Logo() {
+  return (
+      <span className="brand-logo" aria-label="QuickBite">
+      <img
+          className="brand-mark-image"
+          src="/assets/quickbite-logo-45.png"
+          alt=""
+          aria-hidden="true"
+      />
+
+      <span className="brand-name">
+        Quick<span>Bite</span>
+      </span>
+    </span>
+  )
 }
 
-const cuisineFilters = [
-  'All',
-  'Biryani',
-  'Pizza',
-  'South Indian',
-  'Healthy',
-  'Desserts',
-]
-
-const restaurants: Restaurant[] = [
-  {
-    id: 1,
-    name: 'Meghana Foods',
-    cuisine: 'Biryani · Andhra',
-    description: 'Fiery biryanis, kebabs and comforting Andhra favourites.',
-    rating: 4.7,
-    deliveryTime: '25–30 min',
-    priceForTwo: '₹500 for two',
-    offer: '20% OFF',
-    emoji: '🍛',
-    visual: 'linear-gradient(135deg, #312e81, #8b7cff)',
-    featured: true,
-  },
-  {
-    id: 2,
-    name: 'Brik Oven',
-    cuisine: 'Pizza · Italian',
-    description: 'Hand-stretched sourdough pizzas from a wood-fired oven.',
-    rating: 4.6,
-    deliveryTime: '30–35 min',
-    priceForTwo: '₹700 for two',
-    offer: 'FREE DELIVERY',
-    emoji: '🍕',
-    visual: 'linear-gradient(135deg, #134e4a, #2dd4bf)',
-    featured: true,
-  },
-  {
-    id: 3,
-    name: 'Taaza Thindi',
-    cuisine: 'South Indian',
-    description: 'Crisp dosas, soft idlis and freshly brewed filter coffee.',
-    rating: 4.8,
-    deliveryTime: '20–25 min',
-    priceForTwo: '₹250 for two',
-    offer: '15% OFF',
-    emoji: '🥞',
-    visual: 'linear-gradient(135deg, #1e3a8a, #38bdf8)',
-    featured: false,
-  },
-  {
-    id: 4,
-    name: 'Green Theory',
-    cuisine: 'Healthy · Continental',
-    description: 'Fresh bowls, salads and wholesome plant-forward meals.',
-    rating: 4.5,
-    deliveryTime: '25–35 min',
-    priceForTwo: '₹600 for two',
-    offer: '10% OFF',
-    emoji: '🥗',
-    visual: 'linear-gradient(135deg, #14532d, #84cc16)',
-    featured: false,
-  },
-  {
-    id: 5,
-    name: 'Corner House',
-    cuisine: 'Desserts · Ice Cream',
-    description: 'Iconic sundaes, rich chocolate sauces and frozen treats.',
-    rating: 4.7,
-    deliveryTime: '20–30 min',
-    priceForTwo: '₹350 for two',
-    offer: 'BUY 1 GET 1',
-    emoji: '🍨',
-    visual: 'linear-gradient(135deg, #4c1d95, #c084fc)',
-    featured: true,
-  },
-  {
-    id: 6,
-    name: 'Burma Burma',
-    cuisine: 'Asian · Burmese',
-    description: 'Modern Burmese food with bold flavours and comforting bowls.',
-    rating: 4.6,
-    deliveryTime: '35–40 min',
-    priceForTwo: '₹900 for two',
-    offer: '₹150 OFF',
-    emoji: '🍜',
-    visual: 'linear-gradient(135deg, #164e63, #22d3ee)',
-    featured: false,
-  },
-]
-
 function App() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCuisine, setSelectedCuisine] = useState('All')
-
-  const visibleRestaurants = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
-
-    return restaurants.filter((restaurant) => {
-      const matchesCuisine =
-          selectedCuisine === 'All' ||
-          restaurant.cuisine
-              .toLowerCase()
-              .includes(selectedCuisine.toLowerCase())
-
-      const matchesSearch =
-          query.length === 0 ||
-          restaurant.name.toLowerCase().includes(query) ||
-          restaurant.cuisine.toLowerCase().includes(query) ||
-          restaurant.description.toLowerCase().includes(query)
-
-      return matchesCuisine && matchesSearch
-    })
-  }, [searchQuery, selectedCuisine])
-
   return (
-      <div className="app">
-        <header className="app-header">
-          <div className="header-content">
-            <a className="brand" href="/" aria-label="QuickBite home">
-              <span className="brand-mark">Q</span>
-              <span>QuickBite</span>
+      <div className="app-shell">
+        <header className="site-header">
+          <div className="header-inner">
+            <a href="/" className="brand-link">
+              <Logo />
             </a>
 
-            <button className="location-button" type="button">
-              <span className="location-icon">⌖</span>
+            <nav className="main-nav" aria-label="Main navigation">
+              <a href="#services">Services</a>
+              <a href="#partner">Partner with us</a>
+              <a href="#about">About</a>
+              <a href="#help">Help</a>
+            </nav>
 
-              <span>
-              <small>Delivering to</small>
-              <strong>Koramangala, Bengaluru</strong>
-            </span>
-
-              <span aria-hidden="true">⌄</span>
-            </button>
-
-            <nav className="header-actions" aria-label="Main navigation">
-              <button className="text-button" type="button">
+            <div className="header-actions">
+              <button className="sign-in-button" type="button">
                 Sign in
               </button>
 
-              <button className="cart-button" type="button">
-                <span>Cart</span>
-                <span className="cart-count">2</span>
-              </button>
-            </nav>
+              <a className="order-button" href="/restaurant">
+                Order food
+              </a>
+            </div>
           </div>
         </header>
 
-        <main className="page-content">
-          <section className="hero">
-            <div className="hero-copy">
-              <span className="eyebrow">Fresh picks · delivered fast</span>
-
-              <h1>
-                Your next favourite meal is
-                <span> closer than you think.</span>
-              </h1>
-
-              <p>
-                Discover standout restaurants, neighbourhood favourites and
-                dishes worth craving.
-              </p>
-
-              <label className="search-box">
-              <span className="search-icon" aria-hidden="true">
-                ⌕
+        <main>
+          <section className="hero-section">
+            <div className="hero-inner">
+              <div className="hero-copy">
+              <span className="eyebrow">
+                Your neighbourhood, delivered
               </span>
 
-                <input
-                    type="search"
-                    placeholder="Search restaurants, dishes or cuisines"
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                />
+                <h1>
+                  Great food.
+                  <br />
+                  Right when you want it.
+                </h1>
 
-                <button type="button">Find food</button>
-              </label>
+                <p>
+                  Discover neighbourhood restaurants and get your favourites
+                  delivered fresh, fast and exactly when you need them.
+                </p>
 
-              <div className="hero-highlights">
-                <span>⚡ Average delivery in 28 minutes</span>
-                <span>● Live restaurant availability</span>
-              </div>
-            </div>
+                <div className="hero-actions">
+                  <a className="primary-cta" href="/restaurant">
+                    Explore restaurants <PiArrowRight />
+                  </a>
 
-            <aside className="hero-order-card">
-              <div className="order-card-heading">
-                <div>
-                  <small>YOUR DINNER PLAN</small>
-                  <h2>Comfort food night</h2>
+                  <a className="secondary-cta" href="#partner">
+                    Grow with QuickBite
+                  </a>
                 </div>
 
-                <span className="live-badge">LIVE</span>
+                <div className="hero-stats">
+                  <div>
+                    <strong>100+</strong>
+                    <span>restaurants</span>
+                  </div>
+
+                  <div>
+                    <strong>30 min</strong>
+                    <span>average delivery</span>
+                  </div>
+
+                  <div>
+                    <strong>4.8/5</strong>
+                    <span>customer rating</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="order-item">
-                <span className="order-item-icon">🍛</span>
+              <div className="hero-visual">
+                <div className="hero-image-wrap">
+                  <img
+                      src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=88"
+                      alt="Freshly baked vegetable pizza"
+                  />
+                </div>
 
-                <span>
-                <strong>Boneless biryani</strong>
-                <small>Meghana Foods</small>
-              </span>
+                <div className="floating-card delivery-time-card">
+                <span className="floating-icon mint-icon">
+                  <PiClock />
+                </span>
 
-                <strong>₹345</strong>
+                  <span>
+                  <strong>24 min</strong>
+                  <small>Lightning delivery</small>
+                </span>
+                </div>
+
+                <div className="floating-card rating-card">
+                <span className="floating-icon purple-icon">
+                  <PiStarFill />
+                </span>
+
+                  <span>
+                  <strong>4.9</strong>
+                  <small>Customer rating</small>
+                </span>
+                </div>
               </div>
-
-              <div className="order-item">
-                <span className="order-item-icon">🥤</span>
-
-                <span>
-                <strong>Fresh lime soda</strong>
-                <small>Perfectly chilled</small>
-              </span>
-
-                <strong>₹65</strong>
-              </div>
-
-              <div className="order-total">
-              <span>
-                <small>Delivery in</small>
-                <strong>26 minutes</strong>
-              </span>
-
-                <button type="button">View cart · ₹410</button>
-              </div>
-            </aside>
+            </div>
           </section>
 
-          <section className="restaurant-section">
+          <section className="services-section" id="services">
             <div className="section-heading">
+              <span>Everything in one place</span>
+
+              <h2>What brings you to QuickBite?</h2>
+
+              <p>
+                One platform for customers, restaurant partners and the people
+                keeping every order moving.
+              </p>
+            </div>
+
+            <div className="service-grid">
+              <a className="service-card food-service" href="/restaurant">
+                <div className="service-copy">
+                <span className="service-icon">
+                  <PiLightning />
+                </span>
+
+                  <h3>Food delivery</h3>
+
+                  <p>
+                    Order from your favourite restaurants and get it delivered
+                    fast.
+                  </p>
+
+                  <span className="service-link">
+                  Browse restaurants <PiArrowRight />
+                </span>
+                </div>
+
+                <img
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=86"
+                    alt="A table filled with delicious food"
+                />
+              </a>
+
+              <a
+                  className="service-card partner-service"
+                  href="/partner"
+                  id="partner"
+              >
+                <div className="service-copy">
+                <span className="service-icon">
+                  <PiStorefront />
+                </span>
+
+                  <h3>Restaurant partner</h3>
+
+                  <p>
+                    Reach more customers and grow your business with QuickBite.
+                  </p>
+
+                  <span className="service-link">
+                  Become a partner <PiArrowRight />
+                </span>
+                </div>
+
+                <img
+                    src="/assets/restaurant-partner.png"
+                    alt="Smiling restaurant owner standing confidently in his kitchen"
+                />
+              </a>
+
+              <a className="service-card admin-service" href="/admin">
+                <div className="service-copy">
+                <span className="service-icon">
+                  <PiChartLineUp />
+                </span>
+
+                  <h3>Admin control</h3>
+
+                  <p>
+                    Manage restaurants, availability and operations in one place.
+                  </p>
+
+                  <span className="service-link">
+                  Open dashboard <PiArrowRight />
+                </span>
+                </div>
+
+                <div className="dashboard-preview" aria-hidden="true">
+                  <div className="dashboard-sidebar">
+                    <strong>Q</strong>
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+
+                  <div className="dashboard-content">
+                    <small>Overview</small>
+
+                    <div className="dashboard-metrics">
+                      <div>
+                        <span>Total orders</span>
+                        <strong>1,245</strong>
+                        <small>+18%</small>
+                      </div>
+
+                      <div>
+                        <span>Revenue</span>
+                        <strong>₹2.4L</strong>
+                        <small>+12%</small>
+                      </div>
+                    </div>
+
+                    <div className="dashboard-chart">
+                      <i style={{ height: '34%' }} />
+                      <i style={{ height: '52%' }} />
+                      <i style={{ height: '43%' }} />
+                      <i style={{ height: '68%' }} />
+                      <i style={{ height: '58%' }} />
+                      <i style={{ height: '84%' }} />
+                      <i style={{ height: '74%' }} />
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section className="promise-section" id="about">
+            <article>
+            <span className="promise-icon purple-icon">
+              <PiLightning />
+            </span>
+
               <div>
-                <span className="section-kicker">CURATED NEAR YOU</span>
-                <h2>Restaurants worth ordering from</h2>
+                <h3>Fast delivery</h3>
+                <p>Quick doorstep delivery, every time.</p>
               </div>
+            </article>
 
-              <p>{visibleRestaurants.length} places available</p>
-            </div>
+            <article>
+            <span className="promise-icon mint-icon">
+              <PiShieldCheck />
+            </span>
 
-            <div className="filter-row">
-              {cuisineFilters.map((cuisine) => (
-                  <button
-                      className={selectedCuisine === cuisine ? 'active' : ''}
-                      key={cuisine}
-                      type="button"
-                      onClick={() => setSelectedCuisine(cuisine)}
-                  >
-                    {cuisine}
-                  </button>
-              ))}
-            </div>
+              <div>
+                <h3>Safe &amp; reliable</h3>
+                <p>Trusted restaurants and dependable service.</p>
+              </div>
+            </article>
 
-            {visibleRestaurants.length > 0 ? (
-                <div className="restaurant-grid">
-                  {visibleRestaurants.map((restaurant) => (
-                      <article className="restaurant-card" key={restaurant.id}>
-                        <div
-                            className="restaurant-visual"
-                            style={{ background: restaurant.visual }}
-                        >
-                          <span className="food-emoji">{restaurant.emoji}</span>
-                          <span className="offer-badge">{restaurant.offer}</span>
+            <article>
+            <span className="promise-icon purple-icon">
+              <PiHeadset />
+            </span>
 
-                          {restaurant.featured && (
-                              <span className="featured-badge">FEATURED</span>
-                          )}
-                        </div>
-
-                        <div className="restaurant-details">
-                          <div className="restaurant-title">
-                            <div>
-                              <h3>{restaurant.name}</h3>
-                              <p>{restaurant.cuisine}</p>
-                            </div>
-
-                            <span className="rating">★ {restaurant.rating}</span>
-                          </div>
-
-                          <p className="restaurant-description">
-                            {restaurant.description}
-                          </p>
-
-                          <div className="restaurant-meta">
-                            <span>◷ {restaurant.deliveryTime}</span>
-                            <span>{restaurant.priceForTwo}</span>
-                          </div>
-
-                          <button className="menu-button" type="button">
-                            View menu
-                            <span aria-hidden="true">→</span>
-                          </button>
-                        </div>
-                      </article>
-                  ))}
-                </div>
-            ) : (
-                <div className="empty-state">
-                  <span>🍽️</span>
-                  <h3>No restaurants found</h3>
-                  <p>Try another restaurant name or cuisine.</p>
-                </div>
-            )}
+              <div>
+                <h3>Always here for you</h3>
+                <p>Helpful support whenever you need us.</p>
+              </div>
+            </article>
           </section>
         </main>
 
-        <footer className="app-footer">
-          <div>
-            <a className="brand footer-brand" href="/">
-              <span className="brand-mark">Q</span>
-              <span>QuickBite</span>
-            </a>
+        <footer className="site-footer" id="help">
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <a href="/" className="brand-link">
+                <Logo />
+              </a>
 
-            <p>Good food, minus the wait.</p>
+              <p>
+                Great food from local restaurants, delivered fresh to your door.
+              </p>
+            </div>
+
+            <div className="footer-column">
+              <h3>QuickBite</h3>
+              <a href="#services">Services</a>
+              <a href="#partner">Partner with us</a>
+              <a href="#about">About</a>
+              <a href="#careers">Careers</a>
+            </div>
+
+            <div className="footer-column">
+              <h3>Support</h3>
+              <a href="#help">Help &amp; FAQs</a>
+              <a href="#contact">Contact us</a>
+              <a href="#restaurant-support">Restaurant support</a>
+              <a href="#track-order">Track your order</a>
+            </div>
+
+            <div className="footer-column">
+              <h3>Legal</h3>
+              <a href="#terms">Terms of service</a>
+              <a href="#privacy">Privacy policy</a>
+              <a href="#refund">Refund policy</a>
+              <a href="#cookies">Cookie policy</a>
+            </div>
+
+            <div className="footer-column footer-contact">
+              <h3>Get in touch</h3>
+              <a href="mailto:hello@quickbite.com">
+                hello@quickbite.com
+              </a>
+              <span>1800-123-4567</span>
+              <span>Mon–Sun: 8 AM – 11 PM</span>
+            </div>
           </div>
 
-          <span>Built in Bengaluru · © 2026 QuickBite</span>
+          <div className="footer-bottom">
+            © 2026 QuickBite. All rights reserved.
+          </div>
         </footer>
       </div>
   )

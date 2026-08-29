@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +52,14 @@ public class RestaurantService {
     public PageResponse<RestaurantSummaryResponse> getRestaurantsByCityCode(Long cityCode, int page, int size) {
         validatePagination(page, size);
         PageRequest pageRequest = createPageRequest(page, size);
-        Page<RestaurantEntity> databasePage = restaurantRepository.findByCityCode(2L, pageRequest);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findByCityCode(cityCode, pageRequest);
+        return toPageResponse(databasePage);
+    }
+
+    public PageResponse<RestaurantSummaryResponse> getRestaurantsByAverageRatingGreaterThan(BigDecimal averageRating, int page, int size) {
+        validatePagination(page, size);
+        PageRequest pageRequest = createPageRequest(page, size);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findByAverageRatingGreaterThan(averageRating, pageRequest);
         return toPageResponse(databasePage);
     }
 
