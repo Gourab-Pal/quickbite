@@ -111,6 +111,14 @@ const adminNav = [
 
 export function PortalLayout({ type }: { type: 'partner' | 'admin' }) {
   const nav = type === 'partner' ? partnerNav : adminNav
+  const navigate = useNavigate()
+  const { showToast } = useApp()
+
+  const handleSignOut = () => {
+    showToast(type === 'partner' ? 'Signed out of the partner portal' : 'Signed out of the admin portal')
+    navigate(type === 'partner' ? '/partner/login' : '/admin/login')
+  }
+
   return (
     <div className={`portal-shell portal-shell--${type}`}>
       <aside className="portal-sidebar">
@@ -127,7 +135,9 @@ export function PortalLayout({ type }: { type: 'partner' | 'admin' }) {
         <div className="portal-profile">
           <img src="/assets/people/restaurant-partner.jpg" alt="Profile" />
           <span><strong>{type === 'partner' ? 'Arjun Rao' : 'Aarav Mehta'}</strong><small>{type === 'partner' ? 'Spice Story Cafe' : 'Operations admin'}</small></span>
-          <PiSignOut />
+          <button className="portal-signout" type="button" aria-label={`Sign out of the ${type} portal`} onClick={handleSignOut}>
+            <PiSignOut />
+          </button>
         </div>
       </aside>
       <section className="portal-main">

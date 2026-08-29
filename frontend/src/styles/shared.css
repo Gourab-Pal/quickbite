@@ -125,6 +125,9 @@
 .portal-profile span { display: grid; flex: 1; gap: 2px; }
 .portal-profile strong { font-size: 12px; }
 .portal-profile small { color: #c8b8ce; font-size: 10px; }
+.portal-signout { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; padding: 0; border: 0; border-radius: 9px; color: #c8b8ce; background: transparent; font-size: 18px; }
+.portal-signout:hover { color: #fff; background: rgb(255 255 255 / 13%); }
+.portal-signout:focus-visible { outline: 3px solid rgb(104 205 182 / 48%); outline-offset: 2px; }
 .portal-main { min-width: 0; }
 .portal-topbar { position: sticky; z-index: 10; top: 0; display: flex; min-height: 72px; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); background: rgb(255 255 255 / 96%); backdrop-filter: blur(12px); }
 .portal-topbar > div:first-child { display: grid; gap: 3px; }
