@@ -1,22 +1,27 @@
 export type RestaurantNameApiItem = {
-    id: string
-    name: string
+  id: string
+  name: string
 }
 
 type RestaurantPageApiResponse = {
-    items: RestaurantNameApiItem[]
+  items: RestaurantNameApiItem[]
 }
 
-export async function fetchRestaurantNames(): Promise<RestaurantNameApiItem[]> {
-    const response = await fetch(
-        'http://localhost:8080/api/v1/restaurants?open=true&page=0&size=3',
-    )
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
 
-    if (!response.ok) {
-        throw new Error('Error fetching restaurant name: status:: ' + response.statusText)
-    }
+export async function fetchRestaurantNames(): Promise<
+  RestaurantNameApiItem[]
+> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/restaurants?open=true&page=0&size=3`,
+  )
 
-    const data = (await response.json()) as RestaurantPageApiResponse
+  if (!response.ok) {
+    throw new Error(`Failed to fetch restaurants: ${response.status}`)
+  }
 
-    return data.items
+  const data = (await response.json()) as RestaurantPageApiResponse
+
+  return data.items
 }
