@@ -1,4 +1,6 @@
 package com.gourab.quickbite.menu.dto;
 
-public class MenuCategoryResponse {
+public record MenuCategoryResponse(
+        String menuCategoryName
+) {
 }
