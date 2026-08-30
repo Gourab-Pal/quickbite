@@ -7,6 +7,8 @@ export type RestaurantNameApiItem = {
   area: string
   primaryOffer: string
   averageCostForTwo: number
+  imageUrl: string
+  slug: string
 }
 
 type RestaurantPageApiResponse = {
@@ -32,4 +34,33 @@ export async function fetchRestaurantNames(page: number, size: number): Promise<
   }
 
   return (await response.json()) as RestaurantPageApiResponse
+}
+
+export type RestaurantDetailsApiResponse = {
+  id: string
+  name: string
+  imageUrl: string
+  area: string
+  city: string
+  shortDescription: string
+  averageRating: number
+  maximumDeliveryMinutes: number
+  averageCostForTwo: number
+  totalRatings: number
+}
+
+export async function fetchRestaurantById(
+    id: string,
+): Promise<RestaurantDetailsApiResponse> {
+  const response = await fetch(
+      `${API_BASE_URL}/api/v1/restaurants/${id}`,
+  )
+
+  if (!response.ok) {
+    throw new Error(
+        `Failed to fetch restaurant ${id}: ${response.status}`,
+    )
+  }
+
+  return (await response.json()) as RestaurantDetailsApiResponse
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { fetchRestaurantNames, type RestaurantNameApiItem } from '../../api/restaurants'
+import { fetchRestaurantNames, fetchRestaurantById,
+  type RestaurantNameApiItem, type RestaurantDetailsApiResponse } from '../../api/restaurants'
 import { Loader } from '../../components/Loader'
 import {
   PiArrowLeft,
@@ -96,7 +97,7 @@ function RestaurantCard({ restaurant, compact = false }: { restaurant: Restauran
   return (
     <article className={`cp-restaurant-card ${compact ? 'cp-restaurant-card--compact' : ''}`}>
       <div className="cp-restaurant-card__media">
-        <Link to={`/restaurants/${restaurant.slug}`} aria-label={`Open ${restaurant.name}`}>
+        <Link to={`/restaurants/${restaurant.id}`} aria-label={`Open ${restaurant.name}`}>
           <img src={restaurant.image} alt={`${restaurant.name} food`} />
         </Link>
         <strong className="cp-offer-ribbon">{restaurant.offer}</strong>
@@ -115,7 +116,6 @@ function RestaurantCard({ restaurant, compact = false }: { restaurant: Restauran
           <div className="cp-card-meta">
             <Rating value={restaurant.rating} />
             <span><PiClock /> {restaurant.deliveryMinutes} min</span>
-            <span>{restaurant.distance}</span>
           </div>
           <p>{restaurant.cuisines.join(', ')}</p>
           <small>{restaurant.area} · {currency(restaurant.priceForTwo)} for two</small>
@@ -273,7 +273,9 @@ export function RestaurantsPage() {
         cuisines: apiRestaurant.cuisines,
         area: apiRestaurant.area,
         offer: apiRestaurant.primaryOffer,
-        priceForTwo: apiRestaurant.averageCostForTwo
+        priceForTwo: apiRestaurant.averageCostForTwo,
+        image: apiRestaurant.imageUrl,
+        slug: apiRestaurant.slug
       })
     }
 
@@ -517,6 +519,37 @@ export function SearchPage() {
 export function RestaurantMenuPage() {
   const params = useParams<{ slug?: string; restaurantId?: string; id?: string }>()
   const restaurant = currentRestaurant(params)
+  const [apiRestaurant, setApiRestaurant] = useState<RestaurantDetailsApiResponse | null>(null)
+
+  useEffect(() => {
+    async function loadRestaurant() {
+      if (!params.restaurantId) {
+        return
+      }
+
+      try {
+        const restaurantResponse =
+            await fetchRestaurantById(params.restaurantId)
+
+        setApiRestaurant(restaurantResponse)
+      } catch (error) {
+        console.error('Could not load restaurant:', error)
+      }
+    }
+
+    loadRestaurant()
+  }, [params.restaurantId])
+
+  const restaurantName = apiRestaurant?.name
+  const restaurantImage = apiRestaurant?.imageUrl
+  const restaurantArea = apiRestaurant?.area
+  const restaurantCity = apiRestaurant?.city
+  const restaurantShortDescription = apiRestaurant?.shortDescription
+  const restaurantAverageRating = apiRestaurant?.averageRating ?? 0.0
+  const restaurantMaxDeliveryMinutes = apiRestaurant?.maximumDeliveryMinutes
+  const restaurantAverageCostForTwo = apiRestaurant?.averageCostForTwo ?? 0
+  const restaurantTotalRating = apiRestaurant?.totalRatings ?? 0
+
   const [query, setQuery] = useState('')
   const [preference, setPreference] = useState<FoodPreference>('all')
   const [saved, setSaved] = useState(false)
@@ -530,21 +563,21 @@ export function RestaurantMenuPage() {
 
   return (
     <div className="cp-page cp-menu-page">
-      <nav className="cp-breadcrumbs" aria-label="Breadcrumb"><Link to="/restaurants">Home</Link><PiCaretRight /><span>{restaurant.name}</span></nav>
+      <nav className="cp-breadcrumbs" aria-label="Breadcrumb"><Link to="/restaurants">Home</Link><PiCaretRight /><span>{restaurantName}</span></nav>
       <section className="cp-restaurant-hero">
-        <img src={restaurant.image} alt={`${restaurant.name} dishes`} />
+        <img src={restaurantImage} alt={`${restaurantName} dishes`} />
         <div className="cp-restaurant-hero__content">
           <div className="cp-title-actions">
-            <div><span className="eyebrow">{restaurant.area}</span><h1>{restaurant.name}</h1></div>
+            <div><span className="eyebrow">{restaurantArea}</span><h1>{restaurantName}</h1></div>
             <button type="button" className={saved ? 'active' : ''} onClick={() => setSaved((value) => !value)}>{saved ? <PiHeartFill /> : <PiHeart />} {saved ? 'Saved' : 'Save'}</button>
           </div>
-          <p>{restaurant.description}</p>
+          <p>{restaurantShortDescription}</p>
           <div className="cp-restaurant-stats">
-            <span><Rating value={restaurant.rating} count={restaurant.ratingCount} /><small>Ratings</small></span>
-            <span><strong>{restaurant.deliveryMinutes} min</strong><small>Delivery time</small></span>
-            <span><strong>{currency(restaurant.priceForTwo)}</strong><small>Cost for two</small></span>
+            <span><Rating value={restaurantAverageRating} count={restaurantTotalRating} /><small>Ratings</small></span>
+            <span><strong>{restaurantMaxDeliveryMinutes} min</strong><small>Delivery time</small></span>
+            <span><strong>{currency(restaurantAverageCostForTwo)}</strong><small>Cost for two</small></span>
           </div>
-          <p className="cp-restaurant-meta"><PiMapPin /> {restaurant.area}, {restaurant.city} · {restaurant.distance}</p>
+          <p className="cp-restaurant-meta"><PiMapPin /> {restaurantArea}, {restaurantCity} </p>
         </div>
       </section>
 
@@ -561,7 +594,7 @@ export function RestaurantMenuPage() {
         </aside>
         <div className="cp-menu-content">
           <div className="cp-menu-tools">
-            <SearchField value={query} onChange={setQuery} placeholder={`Search in ${restaurant.name}`} />
+            <SearchField value={query} onChange={setQuery} placeholder={`Search in ${restaurantName}`} />
             <PreferenceTabs value={preference} onChange={setPreference} />
           </div>
           {!filtered.length && <EmptyState title="No menu items match" description="Try clearing your search or changing the food preference." />}
