@@ -3,11 +3,13 @@ package com.gourab.quickbite.menu.service;
 import com.gourab.quickbite.menu.dto.MenuCategoryResponse;
 import com.gourab.quickbite.menu.entity.MenuCategoryEntity;
 import com.gourab.quickbite.menu.repository.MenuCategoryRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class MenuCategoryService {
     private final MenuCategoryRepository menuCategoryRepository;
     public MenuCategoryService(MenuCategoryRepository menuCategoryRepository) {
