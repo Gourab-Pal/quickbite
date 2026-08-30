@@ -23,6 +23,7 @@ public record RestaurantSummaryResponse(
         String currency,
         boolean open,
         boolean featured,
-        String primaryOffer
+        String primaryOffer,
+        boolean pureVeg
 ) {
 }

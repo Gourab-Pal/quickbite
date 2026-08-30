@@ -9,6 +9,8 @@ export type RestaurantNameApiItem = {
   averageCostForTwo: number
   imageUrl: string
   slug: string
+  pureVeg: boolean
+  featured: boolean
 }
 
 type RestaurantPageApiResponse = {
@@ -21,16 +23,51 @@ type RestaurantPageApiResponse = {
   last: boolean
 }
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
 
-export async function fetchRestaurantNames(page: number, size: number): Promise<RestaurantPageApiResponse> {
+export type RestaurantFilters = {
+  pureVeg?: boolean
+  minimumRating?: number
+  maximumDeliveryMinutes?: number
+}
+
+export async function fetchRestaurantNames(
+    page: number,
+    size: number,
+    filters: RestaurantFilters = {},
+): Promise<RestaurantPageApiResponse> {
+  const queryParameters = new URLSearchParams()
+
+  queryParameters.set('open', 'true')
+  queryParameters.set('page', String(page))
+  queryParameters.set('size', String(size))
+
+  if (filters.pureVeg) {
+    queryParameters.set('pureVeg', 'true')
+  }
+
+  if (filters.minimumRating !== undefined) {
+    queryParameters.set(
+        'averageRatingThreshold',
+        String(filters.minimumRating),
+    )
+  }
+
+  if (filters.maximumDeliveryMinutes !== undefined) {
+    queryParameters.set(
+        'maximumDeliveryMinutes',
+        String(filters.maximumDeliveryMinutes),
+    )
+  }
+
   const response = await fetch(
-    `${API_BASE_URL}/api/v1/restaurants?open=true&page=${page}&size=${size}`,
+      `${API_BASE_URL}/api/v1/restaurants?${queryParameters.toString()}`,
   )
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch restaurants: ${response.status}`)
+    throw new Error(
+        `Failed to fetch restaurants: ${response.status}`,
+    )
   }
 
   return (await response.json()) as RestaurantPageApiResponse

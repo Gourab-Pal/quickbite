@@ -72,6 +72,9 @@ public class RestaurantEntity {
     @Column(name = "primary_offer")
     private String primaryOffer;
 
+    @Column(name = "is_pure_veg", nullable = false)
+    private boolean pureVeg;
+
     protected RestaurantEntity() {
     }
 
@@ -150,4 +153,6 @@ public class RestaurantEntity {
     public String getPrimaryOffer() {
         return primaryOffer;
     }
+
+    public boolean isPureVeg() { return pureVeg;}
 }

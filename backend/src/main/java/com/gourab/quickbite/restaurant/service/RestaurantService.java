@@ -23,13 +23,6 @@ public class RestaurantService {
         this.restaurantRepository = restaurantRepository;
     }
 
-    public PageResponse<RestaurantSummaryResponse> getRestaurants(int page, int size) {
-        validatePagination(page, size);
-        PageRequest pageRequest = createPageRequest(page, size);
-        Page<RestaurantEntity> databasePage = restaurantRepository.findAll(pageRequest);
-        return toPageResponse(databasePage);
-    }
-
     public Optional<RestaurantSummaryResponse> getRestaurantById(UUID restaurantId) {
         Optional<RestaurantEntity> databaseResult = restaurantRepository.findById(restaurantId);
 
@@ -42,24 +35,18 @@ public class RestaurantService {
         return Optional.of(response);
     }
 
-    public PageResponse<RestaurantSummaryResponse> getRestaurantsByOpenStatus(boolean open, int page, int size) {
+    public PageResponse<RestaurantSummaryResponse> getRestaurantsWithFilters(
+            Boolean open,
+            Boolean pureVeg,
+            Long cityCode,
+            BigDecimal minimumRating,
+            Integer maximumDeliveryMinutes,
+            int page,
+            int size
+    ) {
         validatePagination(page, size);
         PageRequest pageRequest = createPageRequest(page, size);
-        Page<RestaurantEntity> databasePage = restaurantRepository.findByOpen(open, pageRequest);
-        return toPageResponse(databasePage);
-    }
-
-    public PageResponse<RestaurantSummaryResponse> getRestaurantsByCityCode(Long cityCode, int page, int size) {
-        validatePagination(page, size);
-        PageRequest pageRequest = createPageRequest(page, size);
-        Page<RestaurantEntity> databasePage = restaurantRepository.findByCityCode(cityCode, pageRequest);
-        return toPageResponse(databasePage);
-    }
-
-    public PageResponse<RestaurantSummaryResponse> getRestaurantsByAverageRatingGreaterThan(BigDecimal averageRating, int page, int size) {
-        validatePagination(page, size);
-        PageRequest pageRequest = createPageRequest(page, size);
-        Page<RestaurantEntity> databasePage = restaurantRepository.findByAverageRatingGreaterThan(averageRating, pageRequest);
+        Page<RestaurantEntity> databasePage = restaurantRepository.findWithFilters(open, pureVeg, cityCode, minimumRating, maximumDeliveryMinutes, pageRequest);
         return toPageResponse(databasePage);
     }
 
@@ -88,7 +75,8 @@ public class RestaurantService {
                 entity.getCurrency(),
                 entity.isOpen(),
                 entity.isFeatured(),
-                entity.getPrimaryOffer()
+                entity.getPrimaryOffer(),
+                entity.isPureVeg()
         );
     }
 

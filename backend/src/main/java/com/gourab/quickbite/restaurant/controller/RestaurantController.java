@@ -24,8 +24,14 @@ public class RestaurantController {
 
     @GetMapping
     public PageResponse<RestaurantSummaryResponse> getRestaurants(
-            @RequestParam (required = false)
+            @RequestParam(required = false)
             BigDecimal averageRatingThreshold,
+
+            @RequestParam(required = false)
+            Integer maximumDeliveryMinutes,
+
+            @RequestParam(required = false)
+            Boolean pureVeg,
 
             @RequestParam(required = false)
             Long cityCode,
@@ -34,25 +40,32 @@ public class RestaurantController {
             Boolean open,
 
             @RequestParam(defaultValue = "0")
-            @Min(value = 0, message = "Page number must be zero or greater")
+            @Min(
+                    value = 0,
+                    message = "Page number must be zero or greater"
+            )
             int page,
 
             @RequestParam(defaultValue = "20")
-            @Min(value = 1, message = "Page size must be at least 1")
-            @Max(value = 100, message = "Page size must not exceed 100")
+            @Min(
+                    value = 1,
+                    message = "Page size must be at least 1"
+            )
+            @Max(
+                    value = 100,
+                    message = "Page size must not exceed 100"
+            )
             int size
     ) {
-        if(open != null) {
-            return restaurantService.getRestaurantsByOpenStatus(open, page, size);
-        }
-        if(cityCode != null) {
-            return restaurantService.getRestaurantsByCityCode(cityCode, page, size);
-        }
-        if(averageRatingThreshold != null) {
-            return restaurantService.getRestaurantsByAverageRatingGreaterThan(averageRatingThreshold, page, size);
-        }
-
-        return restaurantService.getRestaurants(page, size);
+        return restaurantService.getRestaurantsWithFilters(
+                open,
+                pureVeg,
+                cityCode,
+                averageRatingThreshold,
+                maximumDeliveryMinutes,
+                page,
+                size
+        );
     }
 
     @GetMapping("/{restaurantId}")

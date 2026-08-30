@@ -237,11 +237,31 @@ export function RestaurantsPage() {
   const [sort, setSort] =
     useState<'relevance' | 'delivery' | 'rating'>('relevance')
 
+  function toggleFastOnly() {
+    setCurrentPage(0)
+    setFastOnly((value) => !value)
+  }
+
+  function toggleTopRated() {
+    setCurrentPage(0)
+    setTopRated((value) => !value)
+  }
+
+  function toggleVegOnly() {
+    setCurrentPage(0)
+    setVegOnly((value) => !value)
+  }
+
   useEffect(() => {
     async function loadRestaurantNames() {
       try {
         setIsLoading(true)
-        const restaurantPage = await fetchRestaurantNames(currentPage, 3)
+        const restaurantPage = await fetchRestaurantNames(currentPage, 3,
+            {
+              pureVeg: vegOnly,
+              minimumRating: topRated ? 4.5 : undefined,
+              maximumDeliveryMinutes: fastOnly ? 30 : undefined,
+            },)
 
         setApiRestaurants(restaurantPage.items)
         setTotalPages(restaurantPage.totalPages)
@@ -253,7 +273,7 @@ export function RestaurantsPage() {
     }
 
     loadRestaurantNames()
-  }, [currentPage])
+  }, [currentPage, fastOnly, topRated, vegOnly])
 
   const restaurantCards = useMemo(() => {
     const cards: Restaurant[] = []
@@ -275,7 +295,9 @@ export function RestaurantsPage() {
         offer: apiRestaurant.primaryOffer,
         priceForTwo: apiRestaurant.averageCostForTwo,
         image: apiRestaurant.imageUrl,
-        slug: apiRestaurant.slug
+        slug: apiRestaurant.slug,
+        pureVeg: apiRestaurant.pureVeg,
+        featured: apiRestaurant.featured,
       })
     }
 
@@ -283,15 +305,7 @@ export function RestaurantsPage() {
   }, [apiRestaurants])
 
   const visibleRestaurants = useMemo(() => {
-    const entries = restaurantCards.filter((restaurant) => {
-      return (
-        (!fastOnly || restaurant.deliveryMinutes <= 30)
-        && (!topRated || restaurant.rating >= 4.5)
-        && (!vegOnly || restaurant.pureVeg)
-      )
-    })
-
-    return [...entries].sort((a, b) => {
+    return [...restaurantCards].sort((a, b) => {
       if (sort === 'delivery') {
         return a.deliveryMinutes - b.deliveryMinutes
       }
@@ -302,7 +316,7 @@ export function RestaurantsPage() {
 
       return Number(b.featured) - Number(a.featured)
     })
-  }, [fastOnly, restaurantCards, sort, topRated, vegOnly])
+  }, [restaurantCards, sort])
 
   return (
     <div className="cp-page cp-discovery-page">
@@ -394,7 +408,7 @@ export function RestaurantsPage() {
           <button
             className={fastOnly ? 'active' : ''}
             type="button"
-            onClick={() => setFastOnly((value) => !value)}
+            onClick={toggleFastOnly}
           >
             Under 30 min
           </button>
@@ -402,7 +416,7 @@ export function RestaurantsPage() {
           <button
             className={topRated ? 'active' : ''}
             type="button"
-            onClick={() => setTopRated((value) => !value)}
+            onClick={toggleTopRated}
           >
             Rated 4.5+
           </button>
@@ -410,7 +424,7 @@ export function RestaurantsPage() {
           <button
             className={vegOnly ? 'active' : ''}
             type="button"
-            onClick={() => setVegOnly((value) => !value)}
+            onClick={toggleVegOnly}
           >
             <PiLeaf />
             Pure veg
