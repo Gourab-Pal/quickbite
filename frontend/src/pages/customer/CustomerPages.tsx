@@ -105,7 +105,6 @@ type RestaurantCardData = {
   deliveryMinutes: number
   priceForTwo: number
   offer: string
-  pureVeg: boolean
   featured: boolean
 }
 
@@ -319,7 +318,6 @@ export function RestaurantsPage() {
         deliveryMinutes: apiRestaurant.maximumDeliveryMinutes,
         priceForTwo: apiRestaurant.averageCostForTwo,
         offer: apiRestaurant.primaryOffer,
-        pureVeg: apiRestaurant.pureVeg,
         featured: apiRestaurant.featured,
       })
     }
