@@ -225,6 +225,9 @@ export function RestaurantsPage() {
   const [apiRestaurants, setApiRestaurants] =
     useState<RestaurantNameApiItem[]>([])
 
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+
   const [isLoading, setIsLoading] = useState(true)
 
   const [fastOnly, setFastOnly] = useState(false)
@@ -237,9 +240,11 @@ export function RestaurantsPage() {
   useEffect(() => {
     async function loadRestaurantNames() {
       try {
-        const restaurantNames = await fetchRestaurantNames()
+        setIsLoading(true)
+        const restaurantPage = await fetchRestaurantNames(currentPage, 3)
 
-        setApiRestaurants(restaurantNames)
+        setApiRestaurants(restaurantPage.items)
+        setTotalPages(restaurantPage.totalPages)
       } catch (error) {
         console.error('Could not load restaurants:', error)
       } finally {
@@ -248,7 +253,7 @@ export function RestaurantsPage() {
     }
 
     loadRestaurantNames()
-  }, [])
+  }, [currentPage])
 
   const restaurantCards = useMemo(() => {
     const cards: Restaurant[] = []
@@ -263,6 +268,12 @@ export function RestaurantsPage() {
         ...hardcodedTemplate,
         id: apiRestaurant.id,
         name: apiRestaurant.name,
+        rating: apiRestaurant.averageRating,
+        deliveryMinutes: apiRestaurant.maximumDeliveryMinutes,
+        cuisines: apiRestaurant.cuisines,
+        area: apiRestaurant.area,
+        offer: apiRestaurant.primaryOffer,
+        priceForTwo: apiRestaurant.averageCostForTwo
       })
     }
 
@@ -414,6 +425,31 @@ export function RestaurantsPage() {
           <Loader label="Loading restaurants..." size={90} />
         ) : (
           <RestaurantGrid entries={visibleRestaurants} />
+        )}
+        {!isLoading && totalPages > 1 && (
+            <div className="cp-pagination">
+              <button
+                  type="button"
+                  disabled={currentPage === 0}
+                  onClick={() => setCurrentPage((page) => page - 1)}
+              >
+                <PiArrowLeft />
+                Previous
+              </button>
+
+              <span>
+      Page {currentPage + 1} of {totalPages}
+    </span>
+
+              <button
+                  type="button"
+                  disabled={currentPage >= totalPages - 1}
+                  onClick={() => setCurrentPage((page) => page + 1)}
+              >
+                Next
+                <PiArrowRight />
+              </button>
+            </div>
         )}
       </section>
     </div>
