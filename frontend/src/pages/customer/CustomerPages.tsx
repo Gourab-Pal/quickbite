@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import {fetchRestaurantNames, type RestaurantNameApiItem} from '../../api/restaurants'
+import { fetchRestaurantNames, type RestaurantNameApiItem } from '../../api/restaurants'
+import { Loader } from '../../components/Loader'
 import {
   PiArrowLeft,
   PiArrowRight,
@@ -222,14 +223,16 @@ export function RestaurantsPage() {
   const { openOverlay } = useApp()
 
   const [apiRestaurants, setApiRestaurants] =
-      useState<RestaurantNameApiItem[]>([])
+    useState<RestaurantNameApiItem[]>([])
+
+  const [isLoading, setIsLoading] = useState(true)
 
   const [fastOnly, setFastOnly] = useState(false)
   const [topRated, setTopRated] = useState(false)
   const [vegOnly, setVegOnly] = useState(false)
 
   const [sort, setSort] =
-      useState<'relevance' | 'delivery' | 'rating'>('relevance')
+    useState<'relevance' | 'delivery' | 'rating'>('relevance')
 
   useEffect(() => {
     async function loadRestaurantNames() {
@@ -239,6 +242,8 @@ export function RestaurantsPage() {
         setApiRestaurants(restaurantNames)
       } catch (error) {
         console.error('Could not load restaurants:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -252,7 +257,7 @@ export function RestaurantsPage() {
       const apiRestaurant = apiRestaurants[index]
 
       const hardcodedTemplate =
-          restaurants[index % restaurants.length]
+        restaurants[index % restaurants.length]
 
       cards.push({
         ...hardcodedTemplate,
@@ -267,9 +272,9 @@ export function RestaurantsPage() {
   const visibleRestaurants = useMemo(() => {
     const entries = restaurantCards.filter((restaurant) => {
       return (
-          (!fastOnly || restaurant.deliveryMinutes <= 30)
-          && (!topRated || restaurant.rating >= 4.5)
-          && (!vegOnly || restaurant.pureVeg)
+        (!fastOnly || restaurant.deliveryMinutes <= 30)
+        && (!topRated || restaurant.rating >= 4.5)
+        && (!vegOnly || restaurant.pureVeg)
       )
     })
 
@@ -287,127 +292,131 @@ export function RestaurantsPage() {
   }, [fastOnly, restaurantCards, sort, topRated, vegOnly])
 
   return (
-      <div className="cp-page cp-discovery-page">
-        <section className="cp-section">
-          <SectionHeading title="What are you craving?" />
-          <CuisineRail />
-        </section>
+    <div className="cp-page cp-discovery-page">
+      <section className="cp-section">
+        <SectionHeading title="What are you craving?" />
+        <CuisineRail />
+      </section>
 
-        <section className="cp-section">
-          <SectionHeading
-              title="Top picks near you"
-              link="View all"
-              to="/offers"
-          />
+      <section className="cp-section">
+        <SectionHeading
+          title="Top picks near you"
+          link="View all"
+          to="/offers"
+        />
 
-          <div className="cp-promo-row">
-            <Link
-                to="/offers"
-                className="cp-promo-card cp-promo-card--purple"
-            >
-              <PiTicket />
+        <div className="cp-promo-row">
+          <Link
+            to="/offers"
+            className="cp-promo-card cp-promo-card--purple"
+          >
+            <PiTicket />
 
-              <span>
+            <span>
               <small>Limited-time offers</small>
               <strong>Save up to 40% today</strong>
             </span>
 
-              <PiArrowRight />
-            </Link>
+            <PiArrowRight />
+          </Link>
 
-            <Link
-                to="/membership"
-                className="cp-promo-card cp-promo-card--mint"
-            >
-              <PiCrown />
+          <Link
+            to="/membership"
+            className="cp-promo-card cp-promo-card--mint"
+          >
+            <PiCrown />
 
-              <span>
+            <span>
               <small>QuickBite One</small>
               <strong>Free delivery and extra savings</strong>
             </span>
 
-              <PiArrowRight />
-            </Link>
+            <PiArrowRight />
+          </Link>
 
-            <Link
-                to="/group-order"
-                className="cp-promo-card"
-            >
-              <PiUsers />
+          <Link
+            to="/group-order"
+            className="cp-promo-card"
+          >
+            <PiUsers />
 
-              <span>
+            <span>
               <small>Eating together?</small>
               <strong>Start a group order</strong>
             </span>
 
-              <PiArrowRight />
-            </Link>
-          </div>
-        </section>
+            <PiArrowRight />
+          </Link>
+        </div>
+      </section>
 
-        <section
-            className="cp-section"
-            id="all-restaurants"
-        >
-          <div className="cp-filter-row">
-            <button
-                type="button"
-                onClick={() => openOverlay('filters')}
+      <section
+        className="cp-section"
+        id="all-restaurants"
+      >
+        <div className="cp-filter-row">
+          <button
+            type="button"
+            onClick={() => openOverlay('filters')}
+          >
+            <PiSlidersHorizontal />
+            All filters
+          </button>
+
+          <label className="cp-sort-select">
+            Sort by
+
+            <select
+              value={sort}
+              onChange={(event) => {
+                setSort(event.target.value as typeof sort)
+              }}
             >
-              <PiSlidersHorizontal />
-              All filters
-            </button>
+              <option value="relevance">Relevance</option>
+              <option value="delivery">Delivery time</option>
+              <option value="rating">Rating</option>
+            </select>
+          </label>
 
-            <label className="cp-sort-select">
-              Sort by
+          <button
+            className={fastOnly ? 'active' : ''}
+            type="button"
+            onClick={() => setFastOnly((value) => !value)}
+          >
+            Under 30 min
+          </button>
 
-              <select
-                  value={sort}
-                  onChange={(event) => {
-                    setSort(event.target.value as typeof sort)
-                  }}
-              >
-                <option value="relevance">Relevance</option>
-                <option value="delivery">Delivery time</option>
-                <option value="rating">Rating</option>
-              </select>
-            </label>
+          <button
+            className={topRated ? 'active' : ''}
+            type="button"
+            onClick={() => setTopRated((value) => !value)}
+          >
+            Rated 4.5+
+          </button>
 
-            <button
-                className={fastOnly ? 'active' : ''}
-                type="button"
-                onClick={() => setFastOnly((value) => !value)}
-            >
-              Under 30 min
-            </button>
+          <button
+            className={vegOnly ? 'active' : ''}
+            type="button"
+            onClick={() => setVegOnly((value) => !value)}
+          >
+            <PiLeaf />
+            Pure veg
+          </button>
+        </div>
 
-            <button
-                className={topRated ? 'active' : ''}
-                type="button"
-                onClick={() => setTopRated((value) => !value)}
-            >
-              Rated 4.5+
-            </button>
+        <SectionHeading
+          title="Restaurants near you"
+          link={`${visibleRestaurants.length} available`}
+          to="#all-restaurants"
+        />
 
-            <button
-                className={vegOnly ? 'active' : ''}
-                type="button"
-                onClick={() => setVegOnly((value) => !value)}
-            >
-              <PiLeaf />
-              Pure veg
-            </button>
-          </div>
-
-          <SectionHeading
-              title="Restaurants near you"
-              link={`${visibleRestaurants.length} available`}
-              to="#all-restaurants"
-          />
-
+        {isLoading ? (
+          <Loader label="Loading restaurants..." size={90} />
+        ) : (
           <RestaurantGrid entries={visibleRestaurants} />
-        </section>
-      </div>
+        )}
+      </section>
+    </div>
   )
 }
 
