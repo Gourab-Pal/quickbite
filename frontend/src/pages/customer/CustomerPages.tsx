@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { fetchRestaurantNames, fetchRestaurantById,
-  type RestaurantNameApiItem, type RestaurantDetailsApiResponse } from '../../api/restaurants'
+import {
+  fetchRestaurantNames, fetchRestaurantById,
+  type RestaurantNameApiItem, type RestaurantDetailsApiResponse
+} from '../../api/restaurants'
 import { Loader } from '../../components/Loader'
 import {
   PiArrowLeft,
@@ -92,7 +94,28 @@ function statusTone(status: OrderStatus): 'success' | 'warning' | 'danger' | 'in
   return 'neutral'
 }
 
-function RestaurantCard({ restaurant, compact = false }: { restaurant: Restaurant; compact?: boolean }) {
+type RestaurantCardData = {
+  id: string
+  slug: string
+  name: string
+  image: string
+  cuisines: string[]
+  area: string
+  rating: number
+  deliveryMinutes: number
+  priceForTwo: number
+  offer: string
+  pureVeg: boolean
+  featured: boolean
+}
+
+function RestaurantCard({
+  restaurant,
+  compact = false,
+}: {
+  restaurant: RestaurantCardData
+  compact?: boolean
+}) {
   const [saved, setSaved] = useState(false)
   return (
     <article className={`cp-restaurant-card ${compact ? 'cp-restaurant-card--compact' : ''}`}>
@@ -125,7 +148,11 @@ function RestaurantCard({ restaurant, compact = false }: { restaurant: Restauran
   )
 }
 
-function RestaurantGrid({ entries }: { entries: Restaurant[] }) {
+function RestaurantGrid({
+  entries,
+}: {
+  entries: RestaurantCardData[]
+}) {
   if (!entries.length) {
     return <EmptyState title="No restaurants found" description="Try clearing a filter or searching for another dish." />
   }
@@ -257,11 +284,11 @@ export function RestaurantsPage() {
       try {
         setIsLoading(true)
         const restaurantPage = await fetchRestaurantNames(currentPage, 3,
-            {
-              pureVeg: vegOnly,
-              minimumRating: topRated ? 4.5 : undefined,
-              maximumDeliveryMinutes: fastOnly ? 30 : undefined,
-            },)
+          {
+            pureVeg: vegOnly,
+            minimumRating: topRated ? 4.5 : undefined,
+            maximumDeliveryMinutes: fastOnly ? 30 : undefined,
+          },)
 
         setApiRestaurants(restaurantPage.items)
         setTotalPages(restaurantPage.totalPages)
@@ -276,26 +303,22 @@ export function RestaurantsPage() {
   }, [currentPage, fastOnly, topRated, vegOnly])
 
   const restaurantCards = useMemo(() => {
-    const cards: Restaurant[] = []
+    const cards: RestaurantCardData[] = []
 
     for (let index = 0; index < apiRestaurants.length; index += 1) {
       const apiRestaurant = apiRestaurants[index]
 
-      const hardcodedTemplate =
-        restaurants[index % restaurants.length]
-
       cards.push({
-        ...hardcodedTemplate,
         id: apiRestaurant.id,
+        slug: apiRestaurant.slug,
         name: apiRestaurant.name,
-        rating: apiRestaurant.averageRating,
-        deliveryMinutes: apiRestaurant.maximumDeliveryMinutes,
+        image: apiRestaurant.imageUrl,
         cuisines: apiRestaurant.cuisines,
         area: apiRestaurant.area,
-        offer: apiRestaurant.primaryOffer,
+        rating: apiRestaurant.averageRating,
+        deliveryMinutes: apiRestaurant.maximumDeliveryMinutes,
         priceForTwo: apiRestaurant.averageCostForTwo,
-        image: apiRestaurant.imageUrl,
-        slug: apiRestaurant.slug,
+        offer: apiRestaurant.primaryOffer,
         pureVeg: apiRestaurant.pureVeg,
         featured: apiRestaurant.featured,
       })
@@ -443,29 +466,29 @@ export function RestaurantsPage() {
           <RestaurantGrid entries={visibleRestaurants} />
         )}
         {!isLoading && totalPages > 1 && (
-            <div className="cp-pagination">
-              <button
-                  type="button"
-                  disabled={currentPage === 0}
-                  onClick={() => setCurrentPage((page) => page - 1)}
-              >
-                <PiArrowLeft />
-                Previous
-              </button>
+          <div className="cp-pagination">
+            <button
+              type="button"
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage((page) => page - 1)}
+            >
+              <PiArrowLeft />
+              Previous
+            </button>
 
-              <span>
-      Page {currentPage + 1} of {totalPages}
-    </span>
+            <span>
+              Page {currentPage + 1} of {totalPages}
+            </span>
 
-              <button
-                  type="button"
-                  disabled={currentPage >= totalPages - 1}
-                  onClick={() => setCurrentPage((page) => page + 1)}
-              >
-                Next
-                <PiArrowRight />
-              </button>
-            </div>
+            <button
+              type="button"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setCurrentPage((page) => page + 1)}
+            >
+              Next
+              <PiArrowRight />
+            </button>
+          </div>
         )}
       </section>
     </div>
@@ -543,7 +566,7 @@ export function RestaurantMenuPage() {
 
       try {
         const restaurantResponse =
-            await fetchRestaurantById(params.restaurantId)
+          await fetchRestaurantById(params.restaurantId)
 
         setApiRestaurant(restaurantResponse)
       } catch (error) {
